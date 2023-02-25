@@ -147,15 +147,9 @@ class Converter
         }
     }
 
-    public function start(
-        string $prefix = '',
-        array $extensions = ['jpg', 'jpeg', 'png'],
-        string $toConvert = 'webp',
-        int $quality = 70,
-        bool $deleteOld = true
-    ) {
+    public function start(string $prefix = '', array $extensions = ['jpg', 'jpeg', 'png'], int $quality = 70, bool $deleteOld = true)
+    {
         $this->checkExtensions = $extensions;
-        $this->targetExtension = $toConvert;
         $this->prefix = $prefix;
         $this->quality = $quality;
         $this->deleteOld = $deleteOld;
@@ -168,8 +162,7 @@ class Converter
                 $resultStack[] = $this->downloadFile($file);
             }
             return $resultStack;
-        }
-        else {
+        } else {
             return false;
         }
     }

@@ -1,7 +1,7 @@
 
 # AWS S3 Images to Webp Converter
 
-A brief description of what this project does and who it's for
+You can convert easily that you have uploaded jpg or png images to webp format on AWS S3. In this way, you'll use less bandwidth and storage area.
 
 
 ## Installation
@@ -29,9 +29,12 @@ $converter->setRegion('YOUR_REGION');
 $converter->setBucket('YOUR_BUCKET');
 $converter->connectAws($awsCredentials);
 
-// If you don't want to use prefix, then leave empty first argument
+// S3 Prefix. (If you don't want to use prefix, then leave empty first argument)
+// You want to convert extensions. Array
+// Webp quality. 0-100. 0: worst, 100: best
+// If you set true, the script will delete old jpg/png file on your S3 after upload webp file.
 
-$result = $converter->start('backup/2022/07/', ['jpg', 'jpeg', 'png'], 'webp', 80, false);
+$result = $converter->start('backup/2022/07/', ['jpg', 'jpeg', 'png'], 80, false);
 var_dump($result);
 ```
 
