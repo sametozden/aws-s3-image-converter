@@ -1,0 +1,33 @@
+{
+  "name": "ozden/imageconverter",
+  "description": "imageconverter is a S3 Image converter",
+  "keywords": [
+    "amazon",
+    "s3",
+    "image",
+    "webp",
+    "converter"
+  ],
+  "version": "1.0",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Samet Özden",
+      "email": "iletisim@sametozden.com",
+      "homepage": "https://www.sametozden.com"
+    }
+  ],
+  "require": {
+    "ext-gd": ">=2.0",
+    "php": ">=7.2",
+    "guzzlehttp/guzzle": "^6.5.8 || ^7.4.5",
+    "guzzlehttp/psr7": "^1.8.5 || ^2.3",
+    "guzzlehttp/promises": "^1.4.0",
+    "aws/aws-sdk-php": "^3.260"
+  },
+  "autoload": {
+    "psr-4": {
+      "Ozden\\": "src/"
+    }
+  }
+}
