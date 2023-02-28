@@ -14,7 +14,6 @@ class Converter
     public $awsCredentials;
     public $awsS3;
     public $checkExtensions;
-    public $targetExtension;
     public $quality;
     public $deleteOld;
     public $suitableFiles = [];
@@ -94,7 +93,7 @@ class Converter
             $downloaded = imagecreatefromjpeg($parts['basename']);
         }
 
-        $newWebpName = $parts['filename'] . "." . $this->targetExtension;
+        $newWebpName = $parts['filename'] . ".webp";
         $w = imagesx($downloaded);
         $h = imagesy($downloaded);
         $newWebpCanvas = imagecreatetruecolor($w, $h);
