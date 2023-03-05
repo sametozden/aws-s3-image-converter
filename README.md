@@ -34,7 +34,7 @@ $converter->connectAws($awsCredentials);
 // Webp quality. 0-100. 0: worst, 100: best
 // If you set true, the script will delete old jpg/png file on your S3 after upload webp file.
 
-$result = $converter->start('backup/2022/07/', ['jpg', 'jpeg', 'png'], 80, false);
+$result = $converter->start('backup/2022/07/', ['jpg', 'jpeg', 'jfif', 'png', 'webp'], 70, false);
 var_dump($result);
 ```
 

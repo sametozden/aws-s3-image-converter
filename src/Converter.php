@@ -18,6 +18,8 @@ class Converter
     public $deleteOld;
     public $suitableFiles = [];
 
+    public $oldNamePrefix = "old-";
+
     public function connectAws(array $credentials)
     {
         try {
@@ -73,7 +75,7 @@ class Converter
             $fullAwsPath = 'https://' . $this->bucket . '.s3.' . $this->region . '.amazonaws.com/' . $file;
             $parts = pathinfo($file);
             $client = new GuzzleHttp\Client();
-            $down = $client->get($fullAwsPath, ['sink' => $parts['basename']]);
+            $down = $client->get($fullAwsPath, ['sink' => $this->oldNamePrefix . $parts['basename']]);
             if ($down->getReasonPhrase() == "OK") {
                 return $this->convert($file);
             }
@@ -86,11 +88,14 @@ class Converter
     public function convert($file)
     {
         $parts = pathinfo($file);
+        $oldPath = $this->oldNamePrefix . $parts['basename'];
 
         if ($parts['extension'] == 'png') {
-            $downloaded = imagecreatefrompng($parts['basename']);
-        } elseif ($parts['extension'] == 'jpg' || $parts['extension'] == 'jpeg') {
-            $downloaded = imagecreatefromjpeg($parts['basename']);
+            $downloaded = imagecreatefrompng($oldPath);
+        } elseif ($parts['extension'] == 'jpg' || $parts['extension'] == 'jpeg' || $parts['extension'] == 'jfif') {
+            $downloaded = imagecreatefromjpeg($oldPath);
+        } elseif ($parts['extension'] == 'webp') {
+            $downloaded = imagecreatefromwebp($oldPath);
         }
 
         $newWebpName = $parts['filename'] . ".webp";
@@ -105,8 +110,8 @@ class Converter
 
         if ($upload === true) {
             @unlink($newWebpName);
-            @unlink($parts['basename']);
-            if ($this->deleteOld === true) {
+            @unlink($oldPath);
+            if ($this->deleteOld === true && $parts['extension'] != 'webp') {
                 $this->deleteImageOnAws($file);
             }
             return [$file => $parts['dirname'] . "/" . $newWebpName];
@@ -118,13 +123,18 @@ class Converter
     public function uploadAws($directoryAws, $newImage): bool
     {
         try {
-            $uploadWebpOnAws = $this->awsS3->putObject([
-                'Bucket' => $this->bucket,
-                'Key' => $directoryAws . "/" . $newImage,
-                'Body' => fopen($newImage, 'r'),
-                'ACL' => 'public-read',
-            ]);
-            return ($uploadWebpOnAws['@metadata']['statusCode'] == 200) ? true : false;
+            if(file_exists($newImage)){
+                $uploadWebpOnAws = $this->awsS3->putObject([
+                    'Bucket' => $this->bucket,
+                    'Key' => $directoryAws . "/" . $newImage,
+                    'Body' => fopen($newImage, 'r'),
+                    'ACL' => 'public-read',
+                ]);
+                return ($uploadWebpOnAws['@metadata']['statusCode'] == 200) ? true : false;
+            }
+            else {
+                return false;
+            }
         } catch (Aws\S3\Exception\S3Exception $e) {
             echo $e->getMessage();
             return false;
